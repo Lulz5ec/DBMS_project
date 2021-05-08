@@ -58,7 +58,8 @@ app.use('/home/:id/comments', commentRoutes);
 app.use('/user/:id/cart', cartRoutes);
 app.use('/temp', tempRoutes);
 
-const connectionUrl = 'mongodb://127.0.0.1:27017/medStore';
+// const connectionUrl = 'mongodb://127.0.0.1:27017/medStore';
+const connectionUrl = process.env.DATABASEURL;
 
 const PORT = process.env.PORT || 3000;
 
