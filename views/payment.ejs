@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Med-Store</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+    crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/payment.css">
+</head>
+
+<body>
+  
+    <div class="container-fluid py-3">
+        <div class="row">
+            <div class="col-12 col-sm-8 col-md-6 col-lg-4 mx-auto">
+                <div id="pay-invoice" class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h3 class="text-center">Pay Invoice</h3>
+                        </div>
+                        <hr>
+                        <form action="/user/<%= total %>/cart/order" method="post" novalidate="novalidate" class="needs-validation">
+                            
+                           
+                            <div class="form-group">
+                                <label for="cc-number" class="control-label mb-1">Card number</label>
+                                <input id="cc-number" name="cc-number" type="tel" class="form-control cc-number identified visa" required autocomplete="off"  >
+                                <span class="invalid-feedback">Enter a valid 12 to 16 digit card number</span>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="cc-exp" class="control-label mb-1">Expiration</label>
+                                        <input id="cc-exp" name="cc-exp" type="tel" class="form-control cc-exp" required placeholder="MM / YY" autocomplete="cc-exp">
+                                        <span class="invalid-feedback">Enter the expiration date</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label for="x_card_code" class="control-label mb-1">CVV</label>
+                                    <div class="input-group">
+                                        <input id="x_card_code" name="x_card_code" type="tel" class="form-control cc-cvc" required autocomplete="off">
+                                        <span class="invalid-feedback order-last">Enter the 3-digit code on back</span>
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">
+                                            <span class="fa fa-question-circle fa-lg" data-toggle="popover" data-container="body" data-html="true" data-title="CVV" 
+                                            data-content="<div class='text-center one-card'>The 3 digit code on back of the card..<div class='visa-mc-cvc-preview'></div></div>"
+                                            data-trigger="hover"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4>Total Ammount to be paid <%= total %> INR</h4>
+                            
+                            <div>
+                                <button id="payment-button" type="submit" class="btn btn-lg btn-info btn-block">
+                                    <i class="fa fa-lock fa-lg"></i>&nbsp;
+                                    <span id="payment-button-amount">Pay </span>
+                                    <span id="payment-button-sending" style="display:none;">Sending…</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <footer class="footer">
+          <div class="container text-center">
+            <small class="text-muted"> &copy; DBMS Project | <a class="text-muted" href="/about">About</a> | <a class="text-muted" href="https://github.com/Lulz5ec">Github</a></small>
+          </div>  
+        </footer>
+    </div>
+      
+      <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+      <script src="https://unpkg.com/scrollreveal"></script>
+      <script src="/scripts/payment.js"></script>
+      <script>
+        // ScrollReveal().reveal('.jumbotron-text', { duration: 2000 });
+        ScrollReveal().reveal('.indexCards', {
+          interval: 150, mobile: true, viewFactor: 0.3
+        });
+      
+        (function () {
+          'use strict';
+          window.addEventListener('load', function () {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function (form) {
+              form.addEventListener('submit', function (event) {
+                if (form.checkValidity() === false) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+              }, false);
+            });
+          }, false);
+        })();
+      </script>
+      <script>
+          if (window.location.pathname === "/home") {
+            document.title = "Med-Store";
+            document.getElementById("home").classList.toggle("active");
+          } else if (window.location.pathname === "/login") {
+            document.title = "Login";
+            document.getElementById("login").classList.toggle("active");
+          } else if (window.location.pathname === "/register") {
+            document.title = "Sign Up";
+            document.getElementById("register").classList.toggle("active");
+          } else if (window.location.pathname == "/home/new") {
+            document.title = "Add Med"
+            document.getElementById("newCampground").classList.toggle("active");
+          } else if (window.location.pathname == "/about") {
+            document.title = "About"
+            document.getElementById("about").classList.toggle("active");
+          }
+      </script>
+</body>
+      
+</html>

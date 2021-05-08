@@ -1,0 +1,280 @@
+<% include ../partials/header %>
+  <% include ../partials/errorMsg %>
+
+    <div id="campgroundsContainer" class="container mt-4">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="d-none d-md-block">
+            <div class="lead text-center text-capitalize">
+              <%= medicine.name %>
+            </div>
+            <% if (medicine.tags[0] === "") { %>
+              <% ; %>
+                <% } else { %>
+                  <div class="card shadow-sm mt-3">
+                    <div class="card-header">
+                      <i class="far fa-smile"></i> Amenities
+                    </div>
+                    <ul class="list-group list-group-flush">
+                      <% for (var i = 0; i < medicine.tags.length; i++) { %>
+                        <li class="list-group-item text-capitalize">
+                          <%= medicine.tags[i] %>
+                        </li>
+                        <% } %>
+                    </ul>
+                  </div>
+                  <% } %>
+                    <div class="card shadow-sm mt-3">
+                      <div class="card-header">
+                        <i class="fas fa-phone"></i> Quantity
+                      </div>
+                      <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                          <%= medicine.quantity %>
+                        </li>
+                      </ul>
+                    </div>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <div class="card shadow-sm">
+            <img class="card-img-top" src="<%= medicine.image %>">
+            <div class="card-body">
+              <h5 class="card-title float-right">
+              <%= medicine.price %> $</h5>
+              <h5 class="card-title text-capitalize">
+              <%= medicine.name %>
+              <div>
+                <% if(medicine.comments.length === 0) { %>
+                  <small class="text-muted">No Reviews</small>
+                <% } else { %>
+                  <% var stars = ['<small><i class="far fa-star text-danger"></i></small>', '<small><i class="far fa-star text-danger"></i></small>', '<small><i class="far fa-star text-danger"></i></small>', '<small><i class="far fa-star text-danger"></i></small>', '<small><i class="far fa-star text-danger"></i></small>'] %>
+                  <% for(var i = 0; i < Math.round(medicine.rateAvg); i++) { %>
+                      <% stars[i] = '<small><i class="fas fa-star text-danger"></i></small>' %>
+                  <% } %>
+                  <% for(var i = 0; i < stars.length; i++) { %>
+                    <%- stars[i] %>
+                  <% } %>
+                  <% if (medicine.comments.length === 1) { %>
+                    <small class="text-muted"><%= medicine.comments.length %> Review</small>
+                  <% } else { %>
+                    <small class="text-muted"><%= medicine.comments.length %> Reviews</small>
+                  <% } %>
+                <% } %>
+              </div>
+            </h5>
+              <p class="card-text">
+                <%= medicine.description %>
+                  <div class="d-block d-sm-none d-none d-sm-block d-md-none">
+                    <hr>
+                    <h5 class="card-title"><i class="fas fa-map-marker-alt"></i> Location</h5>
+                      <hr>
+                      <h5 class="card-title text-capitalize"><i class="far fa-calendar-alt"></i> Booking Window</h5>
+                          <% if (medicine.tags[0] === "") { %>
+                            <% ; %>
+                              <% } else { %>
+                                <hr>
+                                <h5 class="card-title">
+                        <i class="far fa-smile"></i> Amenities
+                      </h5>
+
+                                <% for (var i = 0; i < medicine.tags.length; i++) { %>
+                                  <span class="badge badge-secondary text-capitalize"><%= medicine.tags[i] %></span>
+                                  <% } %>
+                                    <% } %>
+                                      <hr>
+                                      <h5 class="card-title"><i class="fas fa-phone"></i> Quantity</h5>
+                                      <%= medicine.quantity %>
+                  </div>
+              </p>
+              <hr>
+              <% if(currentUser && currentUser.username != "admin" ) { %>
+                <form class="row g-3 fl float-right" action="/user/<%= medicine._id %>/cart" method="POST">
+                  <div class="col-auto form-group">
+                    <input type="number" min="1" max="<%= medicine.quantity %>" style="width: 200px;" class="form-control" name="item[quantity]" placeholder="Quantity*" required>
+                  </div>
+                  <div class="col-auto">
+                    <button type="submit" class="btn btn-primary mb-3">Add to cart</button>
+                  </div>
+                </form>
+              <% } %>
+              <p class="card-text text-muted">
+                <span>This was created on
+                <%= moment(medicine.createdAt).format('LL') %>
+              </span>
+              </p>
+              <% if(currentUser && currentUser.username == "admin" ) { %>
+                <form id="deleteForm" action="/home/<%= medicine._id %>?_method=DELETE" method="POST" class="float-right">
+                  <button class="delBtn btn text-dark btn-lg">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+                </form>
+                <a href="/home/<%= medicine._id %>/edit" class="btn text-dark btn-lg float-right">
+                <i class="fas fa-pencil-alt"></i>
+                </a>
+              <% } %> 
+            </div>
+          </div>
+          <div class="card shadow-sm mt-4" id="comments">
+            <ul class="list-group list-group-flush">
+              <% if(currentUser && currentUser.username == "admin" ) { %>
+                <li id="commentItem" class="list-group-item list-group-item-light">
+                  Your Medicine has
+                  <% if (medicine.comments.length === 0) { %>
+                    no reviews.
+                    <% } else if (medicine.comments.length === 1) { %>
+                      1 review
+                      <% } else { %>
+                        <%= medicine.comments.length %> reviews
+                          <% } %>
+                </li>
+                <% } else { %>
+                  <li id="commentItem" class="list-group-item list-group-item-light">
+                    <button class="btn btn-danger float-right" data-toggle="collapse" data-target="#collapseComment" aria-expanded="false" aria-controls="collapseComment">Leave a Review</button>
+                  </li>
+                  <% } %>
+                    <div class="collapse" id="collapseComment">
+                      <div class="card-body">
+                        <form class="needs-validation" action="/home/<%= medicine._id %>/comments" method="POST" novalidate>
+                          <div class="form-group">
+                            <textarea class="form-control" id="exampleFormControlTextarea1" name="comment[text]" rows="3" required></textarea>
+                            <div class="invalid-feedback">
+                              You cannot leave this part blank.
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="" class="mr-2">Rating: </label>
+                            <div class="custom-control custom-radio custom-control-inline">
+                              <input type="radio" id="customRadio1" name="comment[rating]" value="1" class="custom-control-input" required>
+                              <label class="custom-control-label" for="customRadio1">1</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                              <input type="radio" id="customRadio2" name="comment[rating]" value="2" class="custom-control-input" required>
+                              <label class="custom-control-label" for="customRadio2">2</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                              <input type="radio" id="customRadio3" name="comment[rating]" value="3" class="custom-control-input" required>
+                              <label class="custom-control-label" for="customRadio3">3</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                              <input type="radio" id="customRadio4" name="comment[rating]" value="4" class="custom-control-input" required>
+                              <label class="custom-control-label" for="customRadio4">4</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                              <input type="radio" id="customRadio5" name="comment[rating]" value="5" class="custom-control-input" required>
+                              <label class="custom-control-label" for="customRadio5">5</label>
+                            </div>
+                            <div class="invalid-feedback">
+                              Please provide a rating.
+                            </div>
+                          </div>
+                          <button type="submit" class="btn btn-danger btn-sm">Submit</button>
+                          <button type="reset" class="btn btn-secondary btn-sm float right">Reset</button>
+                        </form>
+                      </div>
+                    </div>
+                    <% medicine.comments.forEach(function(comment){ %>
+                      <li class="list-group-item">
+                        <p>
+                          <i class="fas fa-user"></i>
+                          <a href="/user/<%= comment.author.id %>">
+                            <%= comment.author.username %>
+                          </a>
+                          <span class="float-right text-muted">
+                    <% var stars2 = ['<small><i class="far fa-star text-danger"></i></small>', '<small><i class="far fa-star text-danger"></i></small>', '<small><i class="far fa-star text-danger"></i></small>', '<small><i class="far fa-star text-danger"></i></small>', '<small><i class="far fa-star text-danger"></i></small>'] %>
+                    <% for(var i = 0; i < comment.rating; i++) { %>
+                        <% stars2[i] = '<small><i class="fas fa-star text-danger"></i></small>' %>
+                    <% } %>
+                    <% for(var i = 0; i < stars2.length; i++) { %>
+                      <%- stars2[i] %>
+                    <% } %>
+                    <small><%= moment(comment.createdAt).fromNow() %></small>
+                  </span>
+                        </p>
+                        <span class="text-muted">
+                  <%- comment.text %>
+                </span>
+                        <% if(currentUser && comment.author.id.equals(currentUser._id) ) { %>
+                          <div class="float-right">
+                            <a class="btn text-dark" data-toggle="collapse" data-target="#editComment" aria-expanded="false" aria-controls="editComment">
+                      <i class="fas fa-pencil-alt"></i>
+                    </a>
+                            <form id="deleteForm2" action="/home/<%= medicine._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST" class="float-right">
+                              <button class="delBtn btn text-dark">
+                        <i class="fas fa-trash-alt"></i>
+                      </button>
+                            </form>
+                          </div>
+                          <div class="collapse" id="editComment">
+                            <div class="card-body">
+                              <form class="needs-validation" action="/home/<%= medicine._id %>/comments/<%= comment._id %>?_method=PUT" method="POST" novalidate>
+                                <div class="form-group">
+                                  <textarea class="form-control" id="exampleFormControlTextarea1" name="comment[text]" rows="3" required><%= comment.text %></textarea>
+                                  <div class="invalid-feedback">
+                                    You cannot leave this part blank.
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label for="" class="mr-2">Rating: </label>
+                                  <% for(var i = 1; i <= 5; i++) { %>
+                                    <% if(comment.rating === i) { %>
+                                      <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" id="customRadiow<%=[i]%>" name="comment[rating]" value="<%=[i]%>" class="custom-control-input" checked required>
+                                        <label class="custom-control-label" for="customRadiow<%=[i]%>"><%=[i]%></label>
+                                      </div>
+                                      <% } else { %>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                          <input type="radio" id="customRadiow<%=[i]%>" name="comment[rating]" value="<%=[i]%>" class="custom-control-input" required>
+                                          <label class="custom-control-label" for="customRadiow<%=[i]%>"><%=[i]%></label>
+                                        </div>
+                                        <% } %>
+                                          <% } %>
+                                            <div class="invalid-feedback">
+                                              Please provide a rating.
+                                            </div>
+                                </div>
+                                <button type="submit" class="btn btn-danger btn-sm">Edit Review</button>
+                                <button type="reset" class="btn btn-secondary btn-sm float right">Reset</button>
+                              </form>
+                            </div>
+                          </div>
+                          
+                          <% if(comment.admintext != null) { %>
+                            <hr>
+                            <p>Admin Reply: <%= comment.admintext %></p>
+                          <% } %>
+                          
+                          <% } %>
+
+                          <% if(currentUser && currentUser.username == "admin" ) { %>
+                            <div style="width: 100%;">
+                              <a class="btn text-dark" data-toggle="collapse" data-target="#editComment" aria-expanded="false" aria-controls="editComment">
+                                <button type="button" class="btn btn-secondary">Reply</button>
+                              </a>
+                              <div class="collapse" id="editComment">
+                                <div class="card-body">
+                                  <form class="needs-validation" action="/home/<%= medicine._id %>/comments/<%= comment._id %>?_method=PUT" method="POST" novalidate>
+                                    <div class="form-group">
+                                      <textarea class="form-control" id="exampleFormControlTextarea1" name="comment[admintext]" rows="3" required><%= comment.admintext %></textarea>
+                                      <div class="invalid-feedback">
+                                        You cannot leave this part blank.
+                                      </div>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-danger btn-sm">Edit Review</button>
+                                    <button type="reset" class="btn btn-secondary btn-sm float right">Reset</button>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>                            
+                          <% } %>
+                      </li>
+                      <% }) %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+
+    <% include ../partials/footer %>

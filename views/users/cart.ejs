@@ -1,0 +1,48 @@
+<% include ../partials/header %>
+<% include ../partials/errorMsg %>
+<div class="container mt-4">
+    <div class="row">
+      <div class="col"></div>
+      <div class="col-12 col-md-9"> 
+        <div class="card shadow border-0 ">
+            <div class="card-body">
+              <% if(noMatch == null) { %>
+                  <h3 class="text-center">No Item in cart</h3>
+              <% } else { %>
+                  <h1 class="text-center">All Items in Cart</h1>
+              <% } %>
+            </div>
+        </div>   
+        <% var total = 0; %>
+        <% if(noMatch == null) { %>
+        <% } else { %>
+            <% items.forEach(function(item) { %>
+                <div class="card">
+                    <h5 class="card-header"><%= item.nameOfMedicine %></h5>
+                    <div class="card-body">
+                        <div class="card float-right" style="width: 10rem;" >
+                            <img src=<%= item.imageId %> class="card-img-top" >
+                        </div>
+                      <h5 class="card-title">Price: <%= item.price * item.quantity %><% total += item.price * item.quantity %> $</h5>
+                      <p class="card-text">Quantity <%= item.quantity %>, Price/Quantity <%= item.price %> $</p>
+                      <form class="float-left" action="/home/<%= item.idMedicine %>" method="GET">
+                        <button type="submit" class="btn btn-primary btn-sm">Change Quantity</button>
+                      </form>
+                      <form class="float-left" style="padding-left: 20px;" action="/user/<%= item.id %>/cart/delete" method="POST">
+                        <button type="submit" class="btn btn-danger btn-sm">Remove Item</button>
+                      </form>
+                    </div>
+                </div>
+        <% }) %>
+        <% } %>
+        <h5>Total Amount : <%= total %></h5>
+        <form class="row g-3 fl float-right" action="/user/<%= total %>/cart/payment" method="GET">
+            <div class="col-auto">
+              <button type="submit" class="btn btn-primary mb-3">Proceed to payment</button>
+            </div>
+          </form>
+      </div>
+      <div class="col"></div>
+    </div>  
+</div>
+<% include ../partials/footer %>

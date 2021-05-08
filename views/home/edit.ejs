@@ -1,0 +1,57 @@
+<% include ../partials/header %>
+
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col"></div>
+      <div class="col-12 col-sm-12 col-lg-9">
+        <div class="card shadow border-0">
+          <div class="card-body">
+            <h1 class="text-center">Edit
+                <%= medicine.name %>
+            </h1>
+            <p>
+              <small class="text-muted">Fields marked * are required.</small>
+            </p>
+            <form action="/home/<%= medicine._id %>?_method=PUT" method="POST" class="needs-validation" enctype="multipart/form-data"
+              novalidate>
+              <div class="form-group">
+                <label>Name*</label>
+                <input type="text" class="form-control" name="medicine[name]" value="<%= medicine.name %>">
+              </div>
+              <div class="form-group">
+                <label for="">Price*</label>
+                <input type="number" class="form-control" name="medicine[price]" value="<%= medicine.price %>" min="0.01" step="0.01">
+              </div>
+              <div class="input-group mb-3">
+                <div class="custom-file">
+                  <input type="file" name="image" accept="image/*" class="custom-file-input" id="image" aria-describedby="inputGroupFileAddon01">
+                  <label class="custom-file-label" for="inputGroupFile01">Image*</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="exampleFormControlTextarea1">Description*</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" name="medicine[description]" rows="3" required><%= medicine.description %></textarea>
+              </div>
+              <div class="form-group">
+                <label for="">Quantity*</label>
+                <input type="text" class="form-control" name="medicine[quantity]" value="<%= medicine.quantity %>" required>
+                <div class="invalid-feedback">
+                  Please provide a phone number.
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="">Amenities separated by commas (boating,fishing,wifi)</label>
+                <input type="text" class="form-control" name="medicine[tags]" value="<%= medicine.tags %>">
+              </div>
+              <button type="submit" class="btn btn-danger btn-block">Submit</button>
+            </form>
+            <a class="btn btn-link btn-block" href="/home/<%= medicine._id %>">Go Back</a>
+          </div>
+
+        </div>
+      </div>
+      <div class="col"></div>
+    </div>
+  </div>
+
+  <% include ../partials/footer %>
