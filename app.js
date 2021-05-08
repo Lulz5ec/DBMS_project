@@ -19,6 +19,8 @@ const commentRoutes = require("./routes/comments");
 const cartRoutes = require("./routes/cart");
 const tempRoutes = require("./routes/temp");
 
+var session = require('express-session');
+
 const app = express();
 
 // app.use(express.json());
@@ -28,13 +30,32 @@ app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 app.use(flash());
 
-app.use(
-    require("express-session")({
-      secret: "shibas are the best dogs in the world.",
-      resave: false,
-      saveUninitialized: false
-    })
-);
+app.set('trust proxy', 1);
+
+app.use(session({
+cookie:{
+    secure: true,
+    maxAge:60000
+       },
+store: new RedisStore(),
+secret: 'secret',
+saveUninitialized: true,
+resave: false
+}));
+
+app.use(function(req,res,next){
+if(!req.session){
+    return next(new Error('Oh no')) //handle error
+}
+next() //otherwise continue
+});
+// app.use(
+//     require("express-session")({
+//       secret: "shibas are the best dogs in the world.",
+//       resave: false,
+//       saveUninitialized: false
+//     })
+// );
 app.locals.moment = require("moment");
 app.use(passport.initialize());
 app.use(passport.session());
@@ -58,8 +79,8 @@ app.use('/home/:id/comments', commentRoutes);
 app.use('/user/:id/cart', cartRoutes);
 app.use('/temp', tempRoutes);
 
-// const connectionUrl = 'mongodb://127.0.0.1:27017/medStore';
-const connectionUrl = process.env.DATABASEURL;
+const connectionUrl = 'mongodb+srv://dbUser:dbUser@cluster0.rosxc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+// const connectionUrl = process.env.DATABASEURL;
 
 const PORT = process.env.PORT || 3000;
 

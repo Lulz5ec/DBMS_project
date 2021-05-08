@@ -10,7 +10,7 @@ middlewareObj.checkMedicineOwnership = function(req, res, next) {
       res.redirect("/home");
     } else if (
       // foundMedicine.author.id.equals(req.user._id) ||
-      req.user.isAdmin || req.user.username == "admin"
+      req.user.admin || req.user.username == "admin"
     ) {
       req.medicine = foundMedicine;
       next();
@@ -44,7 +44,7 @@ middlewareObj.checkProfileOwnership = function(req, res, next) {
     if (err || !foundUser) {
       req.flash("error", "Sorry, that user doesn't exist");
       res.redirect("/home");
-    } else if (foundUser._id.equals(req.user._id) || req.user.isAdmin) {
+    } else if (foundUser._id.equals(req.user._id) || req.user.admin) {
       req.user = foundUser;
       next();
     } else {
