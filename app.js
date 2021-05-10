@@ -30,32 +30,32 @@ app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 app.use(flash());
 
-app.set('trust proxy', 1);
+// app.set('trust proxy', 1);
 
-app.use(session({
-cookie:{
-    secure: true,
-    maxAge:60000
-       },
-store: new RedisStore(),
-secret: 'secret',
-saveUninitialized: true,
-resave: false
-}));
+// app.use(session({
+// cookie:{
+//     secure: true,
+//     maxAge:60000
+//        },
+// // store: new RedisStore(),
+// secret: 'secret',
+// saveUninitialized: true,
+// resave: false
+// }));
 
-app.use(function(req,res,next){
-if(!req.session){
-    return next(new Error('Oh no')) //handle error
-}
-next() //otherwise continue
-});
-// app.use(
-//     require("express-session")({
-//       secret: "shibas are the best dogs in the world.",
-//       resave: false,
-//       saveUninitialized: false
-//     })
-// );
+// app.use(function(req,res,next){
+// if(!req.session){
+//     return next(new Error('Oh no')) //handle error
+// }
+// next() //otherwise continue
+// });
+app.use(
+    require("express-session")({
+      secret: "shibas are the best dogs in the world.",
+      resave: false,
+      saveUninitialized: false
+    })
+);
 app.locals.moment = require("moment");
 app.use(passport.initialize());
 app.use(passport.session());
