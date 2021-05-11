@@ -4,7 +4,17 @@ var Medicine = require("../models/medicine");
 var Order = require("../models/order");
 var User = require("../models/user");
 var middleware = require("../middleware");
+const nodemailer = require("nodemailer");
 // const { delete } = require("./register");
+
+//node mailer
+var transpoter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'adm1n.medstore@gmail.com',
+        pass: 'DBMSproject'
+    }
+});
 
 // edit profile
 router.get(
@@ -137,7 +147,45 @@ router.post("/order", middleware.isLoggedIn, function (req, res) {
                 if (err) {
                     req.flash("error", err.message);
                     return res.render("error");
-                }                
+                }
+                var gh = "";
+                order.items.forEach(function (item){
+                    gh = gh + `<li>Name of Medicine: ${item.nameOfMedicine}</li>
+                    <ul>
+                      <li>Quantity: ${item.quantity}</li>
+                      <li>Price per product: ${item.price} ₹</li>
+                    </ul>
+                    <hr>`
+                });
+                const draft = `
+                <h3>Payment Receipt</h3>
+                <h4>Ordered by -</h4>
+                <p>Name: ${order.author.name}</p>
+                <h4>Date and Time: ${order.time}</h4>
+                <hr>
+                <ol>
+                ` + 
+                gh
+                +
+                `</ol>
+                <h3>Total Payment: ${order.totalPayment} ₹</h3>
+                <h4>Successfully Paid</h4>`
+                ;
+                console.log(draft);
+                var mailOptions = {
+                    from: 'adm1n.medstore@gmail.com',
+                    to: foundUser.email,
+                    subject: 'Receipt of Payment at Med-Store',
+                    text: 'Hello there,',
+                    html: draft
+                };
+                transpoter.sendMail(mailOptions, function(error, info) {
+                    if(error) {
+                        console(error);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                });                
                 foundUser.items.forEach(function (tempitem) {
 
                     Medicine.findById(tempitem.idMedicine, function(err, medicine) {
